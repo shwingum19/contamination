@@ -1,83 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Contamination – Dashboard</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #111;
-      color: #eee;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .zone {
-      margin-bottom: 20px;
-    }
-    .zone h2 {
-      margin-bottom: 10px;
-    }
-    .tag {
-      display: inline-block;
-      width: 80px;
-      height: 40px;
-      line-height: 40px;
-      text-align: center;
-      margin: 5px;
-      border-radius: 5px;
-      font-weight: bold;
-      color: #fff;
-    }
-    .sain { background-color: #28a745; } /* vert */
-    .contamine { background-color: #dc3545; } /* rouge */
-  </style>
+<meta charset="UTF-8">
+<title>Contamination – Dashboard</title>
+<style>
+body { font-family: Arial; background:#111; color:#eee; padding:20px; text-align:center; }
+h1 { margin-bottom:30px; }
+.tag { display:inline-block; width:80px; height:40px; line-height:40px; text-align:center; margin:5px; border-radius:5px; font-weight:bold; color:#fff; }
+.sain { background-color:#28a745; }
+.contamine { background-color:#dc3545; }
+.zone { margin-bottom:20px; }
+.zone h2 { margin-bottom:10px; }
+</style>
 </head>
 <body>
-
 <h1>Contamination – Dashboard</h1>
 
 <div class="zone">
   <h2>Zone A</h2>
   <div id="A-tags"></div>
 </div>
-
 <div class="zone">
   <h2>Zone B</h2>
   <div id="B-tags"></div>
 </div>
-
 <div class="zone">
   <h2>Zone C</h2>
   <div id="C-tags"></div>
 </div>
 
 <script>
-  // Simule l'état des tags
-  const tags = {
-    "A01": "sain", "A02": "sain", "A03": "contamine", "A04": "sain", "A05": "sain", "A06": "contamine",
-    "A07": "sain", "A08": "sain", "A09": "sain", "A10": "contamine", "A11": "sain", "A12": "sain",
-    "B01": "sain", "B02": "contamine", "B03": "sain", "B04": "sain", "B05": "contamine", "B06": "sain",
-    "B07": "sain", "B08": "sain", "B09": "contamine", "B10": "sain", "B11": "sain", "B12": "sain",
-    "C01": "sain", "C02": "sain", "C03": "sain", "C04": "contamine", "C05": "sain", "C06": "sain",
-    "C07": "contamine", "C08": "sain", "C09": "sain", "C10": "sain", "C11": "sain", "C12": "contamine"
-  };
+const zones = ["A","B","C"];
+zones.forEach(zone => {
+  const container = document.getElementById(zone + "-tags");
+  for(let i=1;i<=12;i++){
+    const tagId = zone + String(i).padStart(2,"0");
+    const div = document.createElement("div");
+    const state = localStorage.getItem(tagId) || "sain";
+    div.className = "tag " + state;
+    div.textContent = tagId;
+    container.appendChild(div);
+  }
+});
 
-  const zones = ["A", "B", "C"];
-
-  zones.forEach(zone => {
+// Met à jour toutes les 500ms pour voir les changements en temps réel
+setInterval(()=>{
+  zones.forEach(zone=>{
     const container = document.getElementById(zone + "-tags");
-    for (let i = 1; i <= 12; i++) {
-      const tagId = zone + String(i).padStart(2, "0");
-      const div = document.createElement("div");
-      div.className = "tag " + tags[tagId];
-      div.textContent = tagId;
-      container.appendChild(div);
+    for(let i=0;i<container.children.length;i++){
+      const tagId = zone + String(i+1).padStart(2,"0");
+      container.children[i].className = "tag " + (localStorage.getItem(tagId)||"sain");
     }
   });
+},500);
 </script>
-
 </body>
 </html>
