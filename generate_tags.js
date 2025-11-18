@@ -1,90 +1,63 @@
-const fs = require('fs'); // Node.js seulement
-const path = require('path');
+const fs = require('fs');
+const zones = ['A','B','C'];
+const path = './tags_generated/'; // dossier où les fichiers seront créés
 
-const folder = './tags'; // Dossier où créer les fichiers
-if (!fs.existsSync(folder)) fs.mkdirSync(folder);
+// Crée le dossier si il n'existe pas
+if (!fs.existsSync(path)){
+    fs.mkdirSync(path);
+}
 
-const template = (tagID) => `
-<!DOCTYPE html>
-<html lang="fr">
+// Template HTML pour chaque tag
+function generateTagHTML(tagId){
+    return `<!DOCTYPE html>
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Tag ${tagID}</title>
+<title>Tag ${tagId}</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-body {
-  margin:0; height:100vh; display:flex; justify-content:center; align-items:center;
-  background:#0a0a0f; font-family:'Share Tech Mono', monospace; color:#fff;
-}
-.container {
-  text-align:center; padding:40px; border-radius:20px;
-  width:300px; backdrop-filter:blur(5px); box-shadow:0 0 40px #000 inset;
-}
-h1 { font-size:3em; margin-bottom:10px; }
-#etat {
-  font-size:5em; margin:20px 0; transition: all 0.2s;
-  padding:10px 20px; border-radius:15px; display:inline-block;
-}
-button {
-  font-size:1.5em; padding:15px 35px; margin:10px; border:none; border-radius:10px; cursor:pointer; transition:all 0.2s; color:#0a0a0f;
-}
-button:hover { transform:scale(1.1); }
-
-.saint {
-  color: #0a0a0f;      /* texte sombre */
-  background: #90ee90; /* fond vert */
-}
-.contamine {
-  color: #0a0a0f;      /* texte sombre */
-  background: #ff4d4d; /* fond rouge */
-}
+body { font-family: Arial; background:#111; color:#fff; text-align:center; padding:50px;}
+#tag { font-size:50px; padding:20px; border-radius:10px; display:inline-block; margin-bottom:30px; }
+.sain { background-color:#28a745; }
+.contamine { background-color:#dc3545; }
+button { font-size:20px; padding:10px 20px; margin:10px; cursor:pointer; }
 </style>
 </head>
 <body>
-<div class="container">
-  <h1 id="tagName">${tagID}</h1>
-  <div id="etat" class="saint">saint</div>
-  <button onclick="changer('contaminer')">Contaminer</button>
-  <button onclick="changer('purifier')">Purifier</button>
-</div>
+
+<h1>Tag ${tagId}</h1>
+<div id="tag">${tagId}</div>
+<br>
+<button onclick="setTag('contamine')">Contaminer</button>
+<button onclick="setTag('sain')">Purifier</button>
 
 <script>
-let etat = "saint";
-const etatDiv = document.getElementById("etat");
+const tagId = "${tagId}";
+const tagDiv = document.getElementById("tag");
 
-function changer(action){
-  if(action === "contaminer") etat="contaminé";
-  if(action === "purifier") etat="saint";
+function loadTag() {
+  const state = localStorage.getItem(tagId) || "sain";
+  tagDiv.className = state;
+}
+function setTag(state) {
+  localStorage.setItem(tagId, state);
+  tagDiv.className = state;
+  alert(tagId + " est maintenant " + state.toUpperCase());
+}
+loadTag();
+</script>
 
-  etatDiv.innerText = etat;
-
-  // Couleur et taille dynamique
-  if(etat === "saint") {
-    etatDiv.className = "saint";
-    etatDiv.style.fontSize = "5em";
-  } else {
-    etatDiv.className = "contamine";
-    etatDiv.style.fontSize = "3.5em";
-  }
+</body>
+</html>`;
 }
 
-// Initialisation à l'ouverture
-etatDiv.innerText = etat;
-etatDiv.className = "saint";
-etatDiv.style.fontSize = "5em";
-</script>
-</body>
-</html>
-`;
-
-const zones = ['A','B','C'];
-
+// Génère tous les tags
 zones.forEach(zone => {
-  for(let i=1; i<=12; i++){
-    const tagID = zone + String(i).padStart(2,'0'); // ex A01
-    const filePath = path.join(folder, `${tagID}.html`);
-    fs.writeFileSync(filePath, template(tagID), 'utf8');
-  }
+    for(let i=1; i<=12; i++){
+        const tagId = zone + String(i).padStart(2,"0");
+        const content = generateTagHTML(tagId);
+        fs.writeFileSync(`${path}${tagId}.html`, content, 'utf8');
+        console.log(`Fichier créé: ${tagId}.html`);
+    }
 });
 
-console.log("36 fichiers HTML générés avec fond dynamique vert/rouge et taille ajustée !");
+console.log('✅ Tous les fichiers tags ont été générés dans le dossier "tags_generated" !');
