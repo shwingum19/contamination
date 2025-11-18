@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Contamination</title>
+<style>
+body { background:#0a0a0f; font-family:'Share Tech Mono', monospace; color:#fff; margin:0; padding:0; }
+h1 { text-align:center; font-size:3em; margin:20px; }
+.zone { display:flex; flex-wrap:wrap; justify-content:center; margin:20px; }
+.tag {
+  width:80px; height:80px; margin:5px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:15px; font-weight:bold; color:#0a0a0f;
+  font-size:1em; transition: all 0.2s;
+}
+.saint { background:#90ee90; color:#0a0a0f; }
+.contamine { background:#ff4d4d; color:#0a0a0f; }
+</style>
+</head>
+<body>
+<h1>Dashboard Contamination</h1>
+
+<div class="zone" id="zoneA"></div>
+<div class="zone" id="zoneB"></div>
+<div class="zone" id="zoneC"></div>
+
+<script>
+// Liste des tags
+const tags = [
+  "A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11","A12",
+  "B01","B02","B03","B04","B05","B06","B07","B08","B09","B10","B11","B12",
+  "C01","C02","C03","C04","C05","C06","C07","C08","C09","C10","C11","C12"
+];
+
+// URL du JSON central
+const jsonURL = "https://tonpseudo.github.io/contamination/tags.json"; // remplace par ton URL
+
+async function updateDashboard() {
+  try {
+    const response = await fetch(jsonURL);
+    const data = await response.json();
+
+    // Vider les zones
+    document.getElementById("zoneA").innerHTML = "";
+    document.getElementById("zoneB").innerHTML = "";
+    document.getElementById("zoneC").innerHTML = "";
+
+    // Ajouter chaque tag avec couleur selon état
+    tags.forEach(tag => {
+      const div = document.createElement("div");
+      const zone = tag[0]; // A, B ou C
+      div.className = "tag " + (data[tag] === "saint" ? "saint" : "contamine");
+      div.innerText = tag;
+      document.getElementById("zone" + zone).appendChild(div);
+    });
+  } catch (err) {
+    console.error("Erreur en lisant tags.json :", err);
+  }
+}
+
+// Mise à jour toutes les 3 secondes
+updateDashboard();
+setInterval(updateDashboard, 3000);
+</script>
+</body>
+</html>
