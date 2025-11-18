@@ -1,71 +1,39 @@
-
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Tag B07</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-body {
-  margin:0; height:100vh; display:flex; justify-content:center; align-items:center;
-  background:#0a0a0f; font-family:'Share Tech Mono', monospace; color:#fff;
-}
-.container {
-  text-align:center; padding:40px; border-radius:20px;
-  width:300px; backdrop-filter:blur(5px); box-shadow:0 0 40px #000 inset;
-}
-h1 { font-size:3em; margin-bottom:10px; }
-#etat {
-  font-size:5em; margin:20px 0; transition: all 0.2s;
-  padding:10px 20px; border-radius:15px; display:inline-block;
-}
-button {
-  font-size:1.5em; padding:15px 35px; margin:10px; border:none; border-radius:10px; cursor:pointer; transition:all 0.2s; color:#0a0a0f;
-}
-button:hover { transform:scale(1.1); }
-
-.saint {
-  color: #0a0a0f;      /* texte sombre */
-  background: #90ee90; /* fond vert */
-}
-.contamine {
-  color: #0a0a0f;      /* texte sombre */
-  background: #ff4d4d; /* fond rouge */
-}
+body { font-family: Arial; background:#111; color:#fff; text-align:center; padding:50px;}
+#tag { font-size:50px; padding:20px; border-radius:10px; display:inline-block; margin-bottom:30px; }
+.sain { background-color:#28a745; }
+.contamine { background-color:#dc3545; }
+button { font-size:20px; padding:10px 20px; margin:10px; cursor:pointer; }
 </style>
 </head>
 <body>
-<div class="container">
-  <h1 id="tagName">B07</h1>
-  <div id="etat" class="saint">saint</div>
-  <button onclick="changer('contaminer')">Contaminer</button>
-  <button onclick="changer('purifier')">Purifier</button>
-</div>
+
+<h1>Tag B07</h1>
+<div id="tag">B07</div>
+<br>
+<button onclick="setTag('contamine')">Contaminer</button>
+<button onclick="setTag('sain')">Purifier</button>
 
 <script>
-let etat = "saint";
-const etatDiv = document.getElementById("etat");
+const tagId = "B07";
+const tagDiv = document.getElementById("tag");
 
-function changer(action){
-  if(action === "contaminer") etat="contaminé";
-  if(action === "purifier") etat="saint";
-
-  etatDiv.innerText = etat;
-
-  // Couleur et taille dynamique
-  if(etat === "saint") {
-    etatDiv.className = "saint";
-    etatDiv.style.fontSize = "5em";
-  } else {
-    etatDiv.className = "contamine";
-    etatDiv.style.fontSize = "3.5em";
-  }
+function loadTag() {
+  const state = localStorage.getItem(tagId) || "sain";
+  tagDiv.className = state;
 }
-
-// Initialisation à l'ouverture
-etatDiv.innerText = etat;
-etatDiv.className = "saint";
-etatDiv.style.fontSize = "5em";
+function setTag(state) {
+  localStorage.setItem(tagId, state);
+  tagDiv.className = state;
+  alert(tagId + " est maintenant " + state.toUpperCase());
+}
+loadTag();
 </script>
+
 </body>
 </html>
