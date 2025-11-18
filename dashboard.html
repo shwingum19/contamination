@@ -1,68 +1,83 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Dashboard Contamination</title>
-<style>
-body { background:#0a0a0f; font-family:'Share Tech Mono', monospace; color:#fff; margin:0; padding:0; }
-h1 { text-align:center; font-size:3em; margin:20px; }
-.zone { display:flex; flex-wrap:wrap; justify-content:center; margin:20px; }
-.tag {
-  width:80px; height:80px; margin:5px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius:15px; font-weight:bold; color:#0a0a0f;
-  font-size:1em; transition: all 0.2s;
-}
-.saint { background:#90ee90; color:#0a0a0f; }
-.contamine { background:#ff4d4d; color:#0a0a0f; }
-</style>
+  <meta charset="UTF-8">
+  <title>Contamination – Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #eee;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .zone {
+      margin-bottom: 20px;
+    }
+    .zone h2 {
+      margin-bottom: 10px;
+    }
+    .tag {
+      display: inline-block;
+      width: 80px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      margin: 5px;
+      border-radius: 5px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .sain { background-color: #28a745; } /* vert */
+    .contamine { background-color: #dc3545; } /* rouge */
+  </style>
 </head>
 <body>
-<h1>Dashboard Contamination</h1>
 
-<div class="zone" id="zoneA"></div>
-<div class="zone" id="zoneB"></div>
-<div class="zone" id="zoneC"></div>
+<h1>Contamination – Dashboard</h1>
+
+<div class="zone">
+  <h2>Zone A</h2>
+  <div id="A-tags"></div>
+</div>
+
+<div class="zone">
+  <h2>Zone B</h2>
+  <div id="B-tags"></div>
+</div>
+
+<div class="zone">
+  <h2>Zone C</h2>
+  <div id="C-tags"></div>
+</div>
 
 <script>
-// Liste des tags
-const tags = [
-  "A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11","A12",
-  "B01","B02","B03","B04","B05","B06","B07","B08","B09","B10","B11","B12",
-  "C01","C02","C03","C04","C05","C06","C07","C08","C09","C10","C11","C12"
-];
+  // Simule l'état des tags
+  const tags = {
+    "A01": "sain", "A02": "sain", "A03": "contamine", "A04": "sain", "A05": "sain", "A06": "contamine",
+    "A07": "sain", "A08": "sain", "A09": "sain", "A10": "contamine", "A11": "sain", "A12": "sain",
+    "B01": "sain", "B02": "contamine", "B03": "sain", "B04": "sain", "B05": "contamine", "B06": "sain",
+    "B07": "sain", "B08": "sain", "B09": "contamine", "B10": "sain", "B11": "sain", "B12": "sain",
+    "C01": "sain", "C02": "sain", "C03": "sain", "C04": "contamine", "C05": "sain", "C06": "sain",
+    "C07": "contamine", "C08": "sain", "C09": "sain", "C10": "sain", "C11": "sain", "C12": "contamine"
+  };
 
-// URL du JSON central
-const jsonURL = "https://shwingum19.github.io/contamination/tags.json";
+  const zones = ["A", "B", "C"];
 
-async function updateDashboard() {
-  try {
-    const response = await fetch(jsonURL);
-    const data = await response.json();
-
-    // Vider les zones
-    document.getElementById("zoneA").innerHTML = "";
-    document.getElementById("zoneB").innerHTML = "";
-    document.getElementById("zoneC").innerHTML = "";
-
-    // Ajouter chaque tag avec couleur selon état
-    tags.forEach(tag => {
+  zones.forEach(zone => {
+    const container = document.getElementById(zone + "-tags");
+    for (let i = 1; i <= 12; i++) {
+      const tagId = zone + String(i).padStart(2, "0");
       const div = document.createElement("div");
-      const zone = tag[0]; // A, B ou C
-      div.className = "tag " + (data[tag] === "saint" ? "saint" : "contamine");
-      div.innerText = tag;
-      document.getElementById("zone" + zone).appendChild(div);
-    });
-  } catch (err) {
-    console.error("Erreur en lisant tags.json :", err);
-  }
-}
-
-// Mise à jour toutes les 3 secondes
-updateDashboard();
-setInterval(updateDashboard, 3000);
+      div.className = "tag " + tags[tagId];
+      div.textContent = tagId;
+      container.appendChild(div);
+    }
+  });
 </script>
+
 </body>
 </html>
-
-
