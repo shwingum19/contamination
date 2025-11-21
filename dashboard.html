@@ -1,15 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <title>Dashboard Contamination</title>
 <style>
-#tagsContainer div {
-  padding: 20px;
-  margin: 10px;
-  border-radius: 10px;
+body {
+  background-color: #0d0d0d;
   color: #fff;
-  display: inline-block;
+  font-family: 'Orbitron', sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+h1 {
+  color: #ff00ff;
+  text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
+}
+
+#tagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.tagBox {
+  width: 120px;
+  height: 120px;
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  color: #fff;
+  border-radius: 15px;
+  text-shadow: 0 0 5px #000;
+  transition: all 0.3s ease;
+}
+
+.sain {
+  background-color: #2ecc71;
+  box-shadow: 0 0 10px #2ecc71, 0 0 20px #2ecc71;
+}
+
+.contamine {
+  background-color: #e74c3c;
+  box-shadow: 0 0 10px #e74c3c, 0 0 20px #e74c3c;
 }
 </style>
 </head>
@@ -22,21 +58,27 @@ const binURL = "https://api.jsonbin.io/v3/b/6920c18ad0ea881f40f760fe";
 const apiKey = "$2a$10$FYbI.UBUR9uUn20mH5/nAesXEm4NPygH2n0HPRBlgSa8j/VmI8LD2";
 
 async function loadTags() {
-  const res = await fetch(binURL, { headers: { "X-Master-Key": apiKey } });
-  const data = await res.json();
-  const container = document.getElementById("tagsContainer");
-  container.innerHTML = "";
+  try {
+    const res = await fetch(binURL, { headers: { "X-Master-Key": apiKey } });
+    const data = await res.json();
+    const container = document.getElementById("tagsContainer");
+    container.innerHTML = "";
 
-  for (const [id, state] of Object.entries(data.record)) {
-    const div = document.createElement("div");
-    div.textContent = id;
-    div.style.backgroundColor = state === "sain" ? "#2ecc71" : "#e74c3c";
-    container.appendChild(div);
+    for (const [id, state] of Object.entries(data.record)) {
+      const div = document.createElement("div");
+      div.textContent = id;
+      div.className = `tagBox ${state}`;
+      container.appendChild(div);
+    }
+  } catch (err) {
+    console.error("Erreur fetch JSON :", err);
   }
 }
 
+// Charge une première fois
 loadTags();
-setInterval(loadTags, 5000); // actualisation toutes les 5 secondes
+// Actualisation toutes les 3 secondes pour voir les changements en temps réel
+setInterval(loadTags, 3000);
 </script>
 </body>
 </html>
